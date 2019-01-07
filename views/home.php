@@ -28,11 +28,16 @@ return <<<HTML
     <!--The div element for the map -->
     <div id="map"></div>
 
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC6H3TWN6x4GNTHm9hHhkSkTMp5xQXuvM4"></script>
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/umd/popper.min.js" integrity="sha384-wHAiFfRlMFy6i5SRaxvfOCifBUQy1xHdJ/yoi7FRNXMRBu5WHdZYu1hA6ZOblgut" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js" integrity="sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k" crossorigin="anonymous"></script>
 
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC6H3TWN6x4GNTHm9hHhkSkTMp5xQXuvM4"></script>
     <script src="/map-icons/dist/js/map-icons.js"></script>
 
     <script>
+        var map;
         function showLocation(position) {
             var latitude = position.coords.latitude;
             var longitude = position.coords.longitude;
@@ -57,22 +62,36 @@ return <<<HTML
         }
         // Initialize and add the map
         function initMap(lat, lng) {
-          var location = {lat: lat, lng: lng};
-          var map = new google.maps.Map(
-              document.getElementById('map'), {zoom: 14, center: location});
-          var marker = new mapIcons.Marker({
-                map: map,
-                position: location,
-                icon: {
-                    path: mapIcons.shapes.SQUARE_ROUNDED,
-                    fillColor: '#00CCBB',
-                    fillOpacity: .6,
-                    strokeColor: '',
-                    strokeWeight: 0
-                },
-                map_icon_label: '<span class="map-icon wi wi-owm-500"></span>'
-            });
-          // var marker = new google.maps.Marker({position: location, map: map});
+            var location = {lat: lat, lng: lng};
+            map = new google.maps.Map(document.getElementById('map'), {zoom: 11, center: location});
+            // Create a <script> tag and set the USGS URL as the source.
+            var script = document.createElement('script');
+            // This example uses a local copy of the GeoJSON stored at
+            // http://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/2.5_week.geojsonp
+            script.src = 'http://api.openweathermap.org/data/2.5/find?lat='+lat+'&lon='+lng+'&cnt=20&APPID=3f3f3ee955f0cacb2fbb1aa892b0a963&callback=callMe';
+            document.getElementsByTagName('head')[0].appendChild(script);
+        }
+
+        window.callMe = function(results) {
+            for (var i = 0; i < results.list.length; i++) {
+                var coords = results.list[i].coord;
+                var location = new google.maps.LatLng(coords.lat,coords.lon);
+                var weatherId = results.list[i].weather[0].id;
+                console.log(weatherId);
+                var city = results.list[i].name;
+                var marker = new mapIcons.Marker({
+                    map: map,
+                    position: location,
+                    icon: {
+                        path: mapIcons.shapes.SQUARE_ROUNDED,
+                        fillColor: '#642BB1',
+                        fillOpacity: .6,
+                        strokeColor: '',
+                        strokeWeight: 0
+                    },
+                    map_icon_label: '<span class="map-icon wi wi-owm-'+weatherId+'"></span>'
+                });
+            }
         }
 
         google.maps.event.addDomListener(window, 'load', startup);
@@ -85,10 +104,8 @@ return <<<HTML
             -->
 
     <!-- Optional JavaScript -->
-    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
-    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/umd/popper.min.js" integrity="sha384-wHAiFfRlMFy6i5SRaxvfOCifBUQy1xHdJ/yoi7FRNXMRBu5WHdZYu1hA6ZOblgut" crossorigin="anonymous"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js" integrity="sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k" crossorigin="anonymous"></script>
+
+
   </body>
 </html>
 HTML;
