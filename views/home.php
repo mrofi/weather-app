@@ -38,6 +38,7 @@ return <<<HTML
 
     <script>
         var map;
+        var infowindow;
         function showLocation(position) {
             var latitude = position.coords.latitude;
             var longitude = position.coords.longitude;
@@ -64,21 +65,22 @@ return <<<HTML
         function initMap(lat, lng) {
             var location = {lat: lat, lng: lng};
             map = new google.maps.Map(document.getElementById('map'), {zoom: 11, center: location});
+            infowindow = new google.maps.InfoWindow();
             // Create a <script> tag and set the USGS URL as the source.
             var script = document.createElement('script');
             // This example uses a local copy of the GeoJSON stored at
             // http://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/2.5_week.geojsonp
-            script.src = 'http://api.openweathermap.org/data/2.5/find?lat='+lat+'&lon='+lng+'&cnt=20&APPID=3f3f3ee955f0cacb2fbb1aa892b0a963&callback=callMe';
+            script.src = 'http://api.openweathermap.org/data/2.5/find?lat='+lat+'&lon='+lng+'&cnt=20&units=metric&APPID=3f3f3ee955f0cacb2fbb1aa892b0a963&callback=callMe';
             document.getElementsByTagName('head')[0].appendChild(script);
         }
 
         window.callMe = function(results) {
             for (var i = 0; i < results.list.length; i++) {
-                var coords = results.list[i].coord;
+                var current = results.list[i];
+                var coords = current.coord;
                 var location = new google.maps.LatLng(coords.lat,coords.lon);
-                var weatherId = results.list[i].weather[0].id;
-                console.log(weatherId);
-                var city = results.list[i].name;
+                var weatherId = current.weather[0].id;
+                var city = current.name;
                 var marker = new mapIcons.Marker({
                     map: map,
                     position: location,
@@ -91,6 +93,23 @@ return <<<HTML
                     },
                     map_icon_label: '<span class="map-icon wi wi-owm-'+weatherId+'"></span>'
                 });
+
+                var detail = '<div class="detail">'
+                            + '<div class="title"><h5>'+city+'</h5></div>'
+                            + '<div class="detail">'
+                            + '<strong>Weather : </strong>'+current.weather[0].main+'<br>'
+                            + '<strong>Temp : </strong>'+current.main.temp+'<sup>o</sup>C<br>'
+                            + '<strong>Humidity : </strong>'+current.main.humidity+'%<br>'
+                            + '</div>'
+                            + '</div>';
+
+            
+                google.maps.event.addListener(marker, 'click', (function(marker, detail) {
+                    return function() {
+                        infowindow.setContent(detail);
+                        infowindow.open(map, marker);
+                    }
+                })(marker, detail));
             }
         }
 
