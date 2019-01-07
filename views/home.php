@@ -12,6 +12,7 @@ return <<<HTML
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
     <link rel="stylesheet" type="text/css" href="/map-icons/dist/css/map-icons.min.css">
+    <link rel="stylesheet" type="text/css" href="/weather-icons/css/weather-icons.min.css">
 
     <title>YourWeather App!</title>
     <style>
@@ -63,13 +64,13 @@ return <<<HTML
                 map: map,
                 position: location,
                 icon: {
-                    path: mapIcons.shapes.SQUARE_PIN,
+                    path: mapIcons.shapes.SQUARE_ROUNDED,
                     fillColor: '#00CCBB',
-                    fillOpacity: 1,
+                    fillOpacity: .6,
                     strokeColor: '',
                     strokeWeight: 0
                 },
-                map_icon_label: '<span class="map-icon map-icon-point-of-interest"></span>'
+                map_icon_label: '<span class="map-icon wi wi-owm-500"></span>'
             });
           // var marker = new google.maps.Marker({position: location, map: map});
         }
