@@ -12,10 +12,58 @@ return <<<HTML
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
 
-    <title>Hello, world!</title>
+    <title>YourWeather App!</title>
+    <style>
+       /* Set the size of the div element that contains the map */
+        #map {
+            height: 600px;  /* The height is 400 pixels */
+            width: 100%;  /* The width is the width of the web page */
+           }
+    </style>
   </head>
   <body>
-    <h1>Hello, world!</h1>
+    <h1>YourWeather App!</h1>
+    <!--The div element for the map -->
+    <div id="map"></div>
+    <script>
+        function showLocation(position) {
+            var latitude = position.coords.latitude;
+            var longitude = position.coords.longitude;
+            initMap(latitude, longitude);
+        }
+
+         function errorHandler(err) {
+            if(err.code == 1) {
+               alert("Error: Access is denied!");
+            } else if( err.code == 2) {
+               alert("Error: Position is unavailable!");
+            }
+        }
+
+        function startup() {
+            if(navigator.geolocation) {
+                var options = {timeout:60000};
+                navigator.geolocation.getCurrentPosition(showLocation, errorHandler, options);
+            } else {
+                alert("Sorry, browser does not support geolocation!");
+            }
+        }
+        // Initialize and add the map
+        function initMap(lat, lng) {
+          var location = {lat: lat, lng: lng};
+          var map = new google.maps.Map(
+              document.getElementById('map'), {zoom: 14, center: location});
+          var marker = new google.maps.Marker({position: location, map: map});
+        }
+    </script>
+            <!--Load the API from the specified URL
+            * The async attribute allows the browser to render the page while the API loads
+            * The key parameter will contain your own API key (which is not needed for this tutorial)
+            * The callback parameter executes the initMap() function
+            -->
+    <script async defer
+            src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC6H3TWN6x4GNTHm9hHhkSkTMp5xQXuvM4&callback=startup">
+    </script>
 
     <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
