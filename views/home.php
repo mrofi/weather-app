@@ -11,6 +11,7 @@ return <<<HTML
 
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" href="/map-icons/dist/css/map-icons.min.css">
 
     <title>YourWeather App!</title>
     <style>
@@ -25,6 +26,11 @@ return <<<HTML
     <h1>YourWeather App!</h1>
     <!--The div element for the map -->
     <div id="map"></div>
+
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC6H3TWN6x4GNTHm9hHhkSkTMp5xQXuvM4"></script>
+
+    <script src="/map-icons/dist/js/map-icons.js"></script>
+
     <script>
         function showLocation(position) {
             var latitude = position.coords.latitude;
@@ -53,17 +59,29 @@ return <<<HTML
           var location = {lat: lat, lng: lng};
           var map = new google.maps.Map(
               document.getElementById('map'), {zoom: 14, center: location});
-          var marker = new google.maps.Marker({position: location, map: map});
+          var marker = new mapIcons.Marker({
+                map: map,
+                position: location,
+                icon: {
+                    path: mapIcons.shapes.SQUARE_PIN,
+                    fillColor: '#00CCBB',
+                    fillOpacity: 1,
+                    strokeColor: '',
+                    strokeWeight: 0
+                },
+                map_icon_label: '<span class="map-icon map-icon-point-of-interest"></span>'
+            });
+          // var marker = new google.maps.Marker({position: location, map: map});
         }
+
+        google.maps.event.addDomListener(window, 'load', startup);
+
     </script>
             <!--Load the API from the specified URL
             * The async attribute allows the browser to render the page while the API loads
             * The key parameter will contain your own API key (which is not needed for this tutorial)
             * The callback parameter executes the initMap() function
             -->
-    <script async defer
-            src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC6H3TWN6x4GNTHm9hHhkSkTMp5xQXuvM4&callback=startup">
-    </script>
 
     <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
